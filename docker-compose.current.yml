@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  bot:
+    image: ghcr.io/aquare11e/media-downloader-bot/bot:v1.0.0
+    restart: unless-stopped
+    environment:
+      - TG_TOKEN=${TG_TOKEN}
+      - ALLOWED_USERS=${ALLOWED_USERS}
+      - COORDINATOR_SERVICE_URL=coordinator:8001
+    networks:
+      - media-downloader
+    depends_on:
+      - coordinator
+
+  coordinator:
+    image: ghcr.io/aquare11e/media-downloader-bot/coordinator:v1.0.0
+    restart: unless-stopped
+    environment:
+      - SERVICE_PORT=8001
+      - REDIS_URL=${REDIS_URL}
+      - REDIS_PASSWORD=${REDIS_PASSWORD:}
+      - FILMS_DIR_PATH=${FILMS_DIR_PATH}
+      - SERIES_DIR_PATH=${SERIES_DIR_PATH}
+      - CARTOONS_DIR_PATH=${CARTOONS_DIR_PATH}
+      - CARTOONS_SERIES_DIR_PATH=${CARTOONS_SERIES_DIR_PATH}
+      - SHORTS_DIR_PATH=${SHORTS_DIR_PATH}
+      - PLEX_SERVICE_URL=plex:8002
+      - TRANSMISSION_SERVICE_URL=transmission:8003
+    networks:
+      - media-downloader
+    depends_on:
+      - plex
+      - transmission
+
+  plex:
+    image: ghcr.io/aquare11e/media-downloader-bot/plex:v1.0.0
+    restart: unless-stopped
+    environment:
+      - PLEX_TOKEN=${PLEX_TOKEN}
+      - PLEX_HOST=${PLEX_HOST}
+      - PLEX_PORT=${PLEX_PORT}
+      - PLEX_CATEGORY_FILMS=${PLEX_CATEGORY_FILMS}
+      - PLEX_CATEGORY_SERIES=${PLEX_CATEGORY_SERIES}
+      - PLEX_CATEGORY_CARTOONS=${PLEX_CATEGORY_CARTOONS}
+      - PLEX_CATEGORY_CARTOONS_SERIES=${PLEX_CATEGORY_CARTOONS_SERIES}
+      - PLEX_CATEGORY_SHORTS=${PLEX_CATEGORY_SHORTS}
+    networks:
+      - media-downloader
+
+  transmission:
+    image: ghcr.io/aquare11e/media-downloader-bot/transmission:v1.0.0
+    restart: unless-stopped
+    environment:
+      - SERVICE_PORT=8003
+      - TRANSMISSION_HOST=${TRANSMISSION_HOST}
+      - TRANSMISSION_PORT=${TRANSMISSION_PORT}
+      - TRANSMISSION_USER=${TRANSMISSION_USER}
+      - TRANSMISSION_PASSWORD=${TRANSMISSION_PASSWORD}
+    networks:
+      - media-downloader
+
+networks:
+  media-downloader:
+    driver: bridge
+  plex-network:
+    driver: bridge
+  transmission-network:
+    driver: bridge
+  redis-network:
+    driver: bridge
