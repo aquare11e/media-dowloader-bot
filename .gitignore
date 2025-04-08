@@ -21,7 +21,6 @@ common/protogen/*
 
 # Go specific
 /vendor/
-/go.sum
 *.test
 *.prof
 
