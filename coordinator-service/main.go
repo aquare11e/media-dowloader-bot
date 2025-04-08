@@ -6,9 +6,9 @@ import (
 	"net"
 	"os"
 
-	"github.com/aquare11e/media-dowloader-bot/common/protogen/common"
-	coordinatorpb "github.com/aquare11e/media-dowloader-bot/common/protogen/coordinator"
-	"github.com/aquare11e/media-dowloader-bot/internal/coordinator"
+	"github.com/aquare11e/media-downloader-bot/common/protogen/common"
+	coordinatorpb "github.com/aquare11e/media-downloader-bot/common/protogen/coordinator"
+	"github.com/aquare11e/media-downloader-bot/internal/coordinator"
 	"github.com/redis/go-redis/v9"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -18,8 +18,8 @@ import (
 func main() {
 	servicePort := getEnvOrRaise("SERVICE_PORT")
 
-	transmissionURL := getEnvOrRaise("TRANSMISSION_URL")
-	plexURL := getEnvOrRaise("PLEX_URL")
+	transmissionServiceURL := getEnvOrRaise("TRANSMISSION_SERVICE_URL")
+	plexServiceURL := getEnvOrRaise("PLEX_SERVICE_URL")
 	redisURL := getEnvOrRaise("REDIS_URL")
 	redisPassword := os.Getenv("REDIS_PASSWORD")
 
@@ -48,13 +48,13 @@ func main() {
 	}
 
 	// Create gRPC connections to other services
-	transmissionConn, err := grpc.NewClient(transmissionURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	transmissionConn, err := grpc.NewClient(transmissionServiceURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to Transmission service: %v", err)
 	}
 	defer transmissionConn.Close()
 
-	plexConn, err := grpc.NewClient(plexURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	plexConn, err := grpc.NewClient(plexServiceURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("Failed to connect to Plex service: %v", err)
 	}

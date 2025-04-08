@@ -1,4 +1,4 @@
-module github.com/aquare11e/media-dowloader-bot
+module github.com/aquare11e/media-downloader-bot
 
 go 1.23.0
 

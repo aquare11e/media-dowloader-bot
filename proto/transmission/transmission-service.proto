@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package transmission;
 
-option go_package = "github.com/aquare11e/media-dowloader-bot/proto/transmission";
+option go_package = "github.com/aquare11e/media-downloader-bot/proto/transmission";
 
 // Transmission service handles torrent operations
 service TransmissionService {

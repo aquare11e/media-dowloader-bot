@@ -11,8 +11,8 @@ This service acts as a coordinator between Plex and Transmission services, manag
 The service requires the following environment variables to be set:
 
 - `SERVICE_PORT`: The port number on which the gRPC server will listen.
-- `TRANSMISSION_URL`: The URL of the Transmission service.
-- `PLEX_URL`: The URL of the Plex service.
+- `TRANSMISSION_SERVICE_URL`: The URL of the Transmission service.
+- `PLEX_SERVICE_URL`: The URL of the Plex service.
 - `REDIS_URL`: The URL of the Redis server.
 - `REDIS_PASSWORD`: The password for the Redis server (optional).
 - `FILMS_DIR_PATH`: The directory path for downloaded films.
@@ -26,8 +26,8 @@ The service requires the following environment variables to be set:
 1. Set up environment variables:
    ```bash
    export SERVICE_PORT=50053
-   export TRANSMISSION_URL=your-transmission-url
-   export PLEX_URL=your-plex-url
+   export TRANSMISSION_SERVICE_URL=transmission-service-url
+   export PLEX_SERVICE_URL=plex-service-url
    export REDIS_URL=your-redis-url
    export REDIS_PASSWORD=your-redis-password # optional
    export FILMS_DIR_PATH=/path/to/films
@@ -123,6 +123,5 @@ Where `category` values are:
 
 ## Security Considerations
 
-- The Transmission and Plex credentials should be kept secure and not exposed in logs or error messages.
 - Consider using environment variables or a secure configuration management system.
 - The service should be run in a secure environment with appropriate network access controls.

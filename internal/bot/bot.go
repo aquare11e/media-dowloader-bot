@@ -4,7 +4,7 @@ import (
 	"log"
 	"strings"
 
-	coordinator "github.com/aquare11e/media-dowloader-bot/common/protogen/coordinator"
+	coordinator "github.com/aquare11e/media-downloader-bot/common/protogen/coordinator"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 

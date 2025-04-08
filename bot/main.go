@@ -5,14 +5,14 @@ import (
 	"os"
 	"strings"
 
-	coordinator "github.com/aquare11e/media-dowloader-bot/common/protogen/coordinator"
-	"github.com/aquare11e/media-dowloader-bot/internal/bot"
+	coordinator "github.com/aquare11e/media-downloader-bot/common/protogen/coordinator"
+	"github.com/aquare11e/media-downloader-bot/internal/bot"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
 const (
-	tokenEnv                 = "TG_TOKEN"
+	tokenEnv                 = "TELEGRAM_BOT_TOKEN"
 	allowedUsersEnv          = "ALLOWED_USERS"
 	coordinatorServiceUrlEnv = "COORDINATOR_SERVICE_URL"
 )

@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package plex;
 
-option go_package = "github.com/aquare11e/media-dowloader-bot/proto/plex";
+option go_package = "github.com/aquare11e/media-downloader-bot/proto/plex";
 
 import "common/common-types.proto";
 

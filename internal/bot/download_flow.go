@@ -6,8 +6,8 @@ import (
 	"log"
 	"strings"
 
-	common "github.com/aquare11e/media-dowloader-bot/common/protogen/common"
-	coordinator "github.com/aquare11e/media-dowloader-bot/common/protogen/coordinator"
+	common "github.com/aquare11e/media-downloader-bot/common/protogen/common"
+	coordinator "github.com/aquare11e/media-downloader-bot/common/protogen/coordinator"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 

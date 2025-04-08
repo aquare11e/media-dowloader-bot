@@ -2,9 +2,8 @@ name: Docker Build and Push
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    tags:
+      - 'v*'  # Trigger on tags starting with 'v'
 
 env:
   REGISTRY: ghcr.io
@@ -52,8 +51,10 @@ jobs:
         with:
           context: .
           file: ./bot/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bot:latest
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bot:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/bot:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -62,8 +63,10 @@ jobs:
         with:
           context: .
           file: ./coordinator-service/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/coordinator:latest
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/coordinator:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/coordinator:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -72,8 +75,10 @@ jobs:
         with:
           context: .
           file: ./plex-service/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/plex:latest
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/plex:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/plex:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -82,7 +87,34 @@ jobs:
         with:
           context: .
           file: ./transmission-service/Dockerfile
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/transmission:latest
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/transmission:${{ github.ref_name }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/transmission:latest
           cache-from: type=gha
-          cache-to: type=gha,mode=max 
+          cache-to: type=gha,mode=max
+
+  update-docker-compose:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Create versioned docker-compose file
+        run: |
+          sed "s/:latest/:${{ github.ref_name }}/g" docker-compose.yml > docker-compose.current.yml
+          echo "Updated docker-compose.current.yml"
+
+      - name: Commit and push versioned docker-compose
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add docker-compose.current.yml
+          git commit -m "Update docker-compose.current.yml for version ${{ github.ref_name }}"
+          git push

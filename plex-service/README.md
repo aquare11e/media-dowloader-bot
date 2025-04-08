@@ -13,7 +13,7 @@ The service requires the following environment variables to be set:
 - `SERVICE_PORT`: The port number on which the gRPC server will listen.
 - `PLEX_HOST`: The hostname or IP address of your Plex server.
 - `PLEX_PORT`: The port number on which your Plex server is running.
-- `PLEX_TOKEN`: Your Plex authentication token.
+- `PLEX_TOKEN`: Your Plex authentication token. For instructions on how to find your token, refer to [this guide](https://www.plexopedia.com/plex-media-server/general/plex-token/#getcurrentusertoken).
 - `PLEX_CATEGORY_FILMS`: The library ID for films in your Plex server.
 - `PLEX_CATEGORY_SERIES`: The library ID for series in your Plex server.
 - `PLEX_CATEGORY_CARTOONS`: The library ID for cartoons in your Plex server.
@@ -93,6 +93,5 @@ Where `type` values are:
 
 ## Security Considerations
 
-- The Plex token should be kept secure and not exposed in logs or error messages
 - Consider using environment variables or a secure configuration management system
 - The service should be run in a secure environment with appropriate network access controls 

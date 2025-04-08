@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	common "github.com/aquare11e/media-dowloader-bot/common/protogen/common"
-	protoPlex "github.com/aquare11e/media-dowloader-bot/common/protogen/plex"
+	common "github.com/aquare11e/media-downloader-bot/common/protogen/common"
+	protoPlex "github.com/aquare11e/media-downloader-bot/common/protogen/plex"
 )
 
 type PlexService struct {

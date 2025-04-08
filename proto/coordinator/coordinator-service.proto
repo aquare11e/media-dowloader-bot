@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package coordinator;
 
-option go_package = "github.com/aquare11e/media-dowloader-bot/proto/coordinator";
+option go_package = "github.com/aquare11e/media-downloader-bot/proto/coordinator";
 
 import "common/common-types.proto";
 

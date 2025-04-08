@@ -6,9 +6,9 @@ import (
 	"log"
 	"time"
 
-	common "github.com/aquare11e/media-dowloader-bot/common/protogen/common"
-	"github.com/aquare11e/media-dowloader-bot/common/protogen/plex"
-	"github.com/aquare11e/media-dowloader-bot/common/protogen/transmission"
+	common "github.com/aquare11e/media-downloader-bot/common/protogen/common"
+	"github.com/aquare11e/media-downloader-bot/common/protogen/plex"
+	"github.com/aquare11e/media-downloader-bot/common/protogen/transmission"
 )
 
 const (

@@ -6,9 +6,9 @@ import (
 	"net"
 	"os"
 
-	common "github.com/aquare11e/media-dowloader-bot/common/protogen/common"
-	protoPlex "github.com/aquare11e/media-dowloader-bot/common/protogen/plex"
-	plexClient "github.com/aquare11e/media-dowloader-bot/internal/plex"
+	common "github.com/aquare11e/media-downloader-bot/common/protogen/common"
+	protoPlex "github.com/aquare11e/media-downloader-bot/common/protogen/plex"
+	plexClient "github.com/aquare11e/media-downloader-bot/internal/plex"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"

@@ -18,12 +18,9 @@ The system consists of four microservices:
    - Uses Redis for state management
 
 3. **Plex Service** (`/plex-service`)
-   - Manages Plex media server integration
-   - Handles media categorization
    - Updates Plex library
 
 4. **Transmission Service** (`/transmission-service`)
-   - Manages Transmission torrent client
    - Handles download operations
    - Provides download status updates
 
@@ -61,14 +58,14 @@ The system consists of four microservices:
 ## Environment Variables
 
 ### Bot Service
-- `TG_TOKEN`: Telegram bot token
+- `TELEGRAM_BOT_TOKEN`: Telegram bot token
 - `ALLOWED_USERS`: Comma-separated list of allowed Telegram user IDs
 - `COORDINATOR_SERVICE_URL`: URL of the coordinator service
 
 ### Coordinator Service
-- `SERVICE_PORT`: gRPC service port
-- `TRANSMISSION_URL`: URL of the transmission service
-- `PLEX_URL`: URL of the plex service
+- `SERVICE_PORT`: The port number on which the gRPC server will listen.
+- `TRANSMISSION_SERVICE_URL`: The URL of the Transmission service.
+- `PLEX_SERVICE_URL`: URL of the Plex service
 - `REDIS_URL`: Redis connection URL
 - `REDIS_PASSWORD`: Redis password
 - `*_DIR_PATH`: Paths for different media types

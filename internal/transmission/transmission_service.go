@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	transmissionpb "github.com/aquare11e/media-dowloader-bot/common/protogen/transmission"
+	transmissionpb "github.com/aquare11e/media-downloader-bot/common/protogen/transmission"
 	transmissionrpc "github.com/hekmon/transmissionrpc/v3"
 )
 

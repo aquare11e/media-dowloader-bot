@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"os"
 
-	transmissionpb "github.com/aquare11e/media-dowloader-bot/common/protogen/transmission"
-	"github.com/aquare11e/media-dowloader-bot/internal/transmission"
+	transmissionpb "github.com/aquare11e/media-downloader-bot/common/protogen/transmission"
+	"github.com/aquare11e/media-downloader-bot/internal/transmission"
 	transmissionrpc "github.com/hekmon/transmissionrpc/v3"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"

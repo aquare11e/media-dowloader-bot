@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	common "github.com/aquare11e/media-dowloader-bot/common/protogen/common"
+	common "github.com/aquare11e/media-downloader-bot/common/protogen/common"
 )
 
 // Client represents a Plex client
