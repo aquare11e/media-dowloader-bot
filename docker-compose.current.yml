@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   bot:
-    image: ghcr.io/aquare11e/media-downloader-bot/bot:v1.0.0
+    image: ghcr.io/aquare11e/media-downloader-bot/bot:v1.0.1
     restart: unless-stopped
     environment:
-      - TG_TOKEN=${TG_TOKEN}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - ALLOWED_USERS=${ALLOWED_USERS}
       - COORDINATOR_SERVICE_URL=coordinator:8001
     networks:
@@ -14,12 +12,12 @@ services:
       - coordinator
 
   coordinator:
-    image: ghcr.io/aquare11e/media-downloader-bot/coordinator:v1.0.0
+    image: ghcr.io/aquare11e/media-downloader-bot/coordinator:v1.0.1
     restart: unless-stopped
     environment:
       - SERVICE_PORT=8001
       - REDIS_URL=${REDIS_URL}
-      - REDIS_PASSWORD=${REDIS_PASSWORD:}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - FILMS_DIR_PATH=${FILMS_DIR_PATH}
       - SERIES_DIR_PATH=${SERIES_DIR_PATH}
       - CARTOONS_DIR_PATH=${CARTOONS_DIR_PATH}
@@ -29,14 +27,16 @@ services:
       - TRANSMISSION_SERVICE_URL=transmission:8003
     networks:
       - media-downloader
+      - redis
     depends_on:
       - plex
       - transmission
 
   plex:
-    image: ghcr.io/aquare11e/media-downloader-bot/plex:v1.0.0
+    image: ghcr.io/aquare11e/media-downloader-bot/plex:v1.0.1
     restart: unless-stopped
     environment:
+      - SERVICE_PORT=8002
       - PLEX_TOKEN=${PLEX_TOKEN}
       - PLEX_HOST=${PLEX_HOST}
       - PLEX_PORT=${PLEX_PORT}
@@ -49,7 +49,7 @@ services:
       - media-downloader
 
   transmission:
-    image: ghcr.io/aquare11e/media-downloader-bot/transmission:v1.0.0
+    image: ghcr.io/aquare11e/media-downloader-bot/transmission:v1.0.1
     restart: unless-stopped
     environment:
       - SERVICE_PORT=8003
@@ -59,13 +59,12 @@ services:
       - TRANSMISSION_PASSWORD=${TRANSMISSION_PASSWORD}
     networks:
       - media-downloader
+      - transmission
 
 networks:
   media-downloader:
     driver: bridge
-  plex-network:
-    driver: bridge
-  transmission-network:
-    driver: bridge
-  redis-network:
-    driver: bridge
+  transmission:
+    external: true
+  redis:
+    external: true
