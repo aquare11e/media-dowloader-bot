@@ -1,11 +1,9 @@
-version: '3.8'
-
 services:
   bot:
     image: ghcr.io/aquare11e/media-downloader-bot/bot:latest
     restart: unless-stopped
     environment:
-      - TG_TOKEN=${TG_TOKEN}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
       - ALLOWED_USERS=${ALLOWED_USERS}
       - COORDINATOR_SERVICE_URL=coordinator:8001
     networks:
@@ -19,7 +17,7 @@ services:
     environment:
       - SERVICE_PORT=8001
       - REDIS_URL=${REDIS_URL}
-      - REDIS_PASSWORD=${REDIS_PASSWORD:}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
       - FILMS_DIR_PATH=${FILMS_DIR_PATH}
       - SERIES_DIR_PATH=${SERIES_DIR_PATH}
       - CARTOONS_DIR_PATH=${CARTOONS_DIR_PATH}
@@ -29,6 +27,7 @@ services:
       - TRANSMISSION_SERVICE_URL=transmission:8003
     networks:
       - media-downloader
+      - redis
     depends_on:
       - plex
       - transmission
@@ -37,6 +36,7 @@ services:
     image: ghcr.io/aquare11e/media-downloader-bot/plex:latest
     restart: unless-stopped
     environment:
+      - SERVICE_PORT=8002
       - PLEX_TOKEN=${PLEX_TOKEN}
       - PLEX_HOST=${PLEX_HOST}
       - PLEX_PORT=${PLEX_PORT}
@@ -59,13 +59,12 @@ services:
       - TRANSMISSION_PASSWORD=${TRANSMISSION_PASSWORD}
     networks:
       - media-downloader
+      - transmission
 
 networks:
   media-downloader:
     driver: bridge
-  plex-network:
-    driver: bridge
-  transmission-network:
-    driver: bridge
-  redis-network:
-    driver: bridge
+  transmission:
+    external: true
+  redis:
+    external: true

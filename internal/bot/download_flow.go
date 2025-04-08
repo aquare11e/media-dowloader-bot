@@ -11,6 +11,14 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
+const (
+	filmsCategory          = "🎬 Films"
+	seriesCategory         = "📺 Series"
+	cartoonsCategory       = "🎨 Cartoons"
+	cartoonsSeriesCategory = "🕸️ Cartoon Series"
+	cartoonsShortsCategory = "🩳 Cartoon Shorts"
+)
+
 type downloadState struct {
 	step     int
 	link     string
@@ -78,15 +86,15 @@ func (df *DownloadFlow) HandleMessage(msg *tgbotapi.Message) {
 		case 2: // Waiting for category selection
 			var category common.RequestType
 			switch msg.Text {
-			case "🎬 Films":
+			case filmsCategory:
 				category = common.RequestType_FILMS
-			case "📺 Series":
+			case seriesCategory:
 				category = common.RequestType_SERIES
-			case "🎨 Cartoons":
+			case cartoonsCategory:
 				category = common.RequestType_CARTOONS
-			case "🕸️ Cartoon Series":
+			case cartoonsSeriesCategory:
 				category = common.RequestType_CARTOONS_SERIES
-			case "🩳 Cartoon Shorts":
+			case cartoonsShortsCategory:
 				category = common.RequestType_SHORTS
 			default:
 				response.Text = "Please select a valid category"
@@ -140,15 +148,15 @@ func (df *DownloadFlow) HandleMessage(msg *tgbotapi.Message) {
 func (df *DownloadFlow) sendCategoryButtons(chatID int64) {
 	keyboard := tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("🎬 Films"),
-			tgbotapi.NewKeyboardButton("📺 Series"),
+			tgbotapi.NewKeyboardButton(filmsCategory),
+			tgbotapi.NewKeyboardButton(seriesCategory),
 		),
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("🎨 Cartoons"),
-			tgbotapi.NewKeyboardButton("📺 Cartoon Series"),
+			tgbotapi.NewKeyboardButton(cartoonsCategory),
+			tgbotapi.NewKeyboardButton(cartoonsSeriesCategory),
 		),
 		tgbotapi.NewKeyboardButtonRow(
-			tgbotapi.NewKeyboardButton("🎨 Cartoon Shorts"),
+			tgbotapi.NewKeyboardButton(cartoonsShortsCategory),
 		),
 	)
 
