@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package common;
+
+option go_package = "github.com/aquare11e/media-dowloader-bot/common/protogen/common";
+
+enum RequestType {
+    REQUEST_TYPE_UNSPECIFIED = 0;
+    FILMS = 1;
+    SERIES = 2;
+    CARTOONS = 3;
+    CARTOONS_SERIES = 4;
+    SHORTS = 5;
+}

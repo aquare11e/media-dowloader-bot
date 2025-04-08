@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package coordinator;
+
+option go_package = "github.com/aquare11e/media-dowloader-bot/proto/coordinator";
+
+import "common/common-types.proto";
+
+// Coordinator service that orchestrates between Plex and Transmission services
+service CoordinatorService {
+  // Add torrent using magnet link
+  rpc AddTorrentByMagnet(AddTorrentByMagnetRequest) returns (stream DownloadResponse) {}
+  
+  // Add torrent using base64 encoded file
+  rpc AddTorrentByFile(AddTorrentByFileRequest) returns (stream DownloadResponse) {}
+}
+
+// Request to add torrent using magnet link
+message AddTorrentByMagnetRequest {
+  string magnet_link = 1;
+  common.RequestType category = 2;
+}
+
+// Request to add torrent using base64 encoded file
+message AddTorrentByFileRequest {
+  string base64_file = 1;
+  common.RequestType category = 2;
+}
+
+// Response containing download status
+message DownloadResponse {
+  string request_id = 1;
+  DownloadStatus status = 2;
+  string message = 3;
+  double progress = 4;
+  int32 eta = 5;
+}
+
+// Enum representing download status
+enum DownloadStatus {
+  DOWNLOAD_STATUS_UNSPECIFIED = 0;
+  DOWNLOAD_STATUS_IN_PROGRESS = 1;
+  DOWNLOAD_STATUS_SUCCESS = 2;
+  DOWNLOAD_STATUS_ERROR = 3;
+} 

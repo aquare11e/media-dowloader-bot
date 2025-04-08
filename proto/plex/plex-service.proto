@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package plex;
+
+option go_package = "github.com/aquare11e/media-dowloader-bot/proto/plex";
+
+import "common/common-types.proto";
+
+// The service definition for the unary request
+service PlexService {
+  // Unary RPC that sends a request and gets a response
+  rpc UpdateCategory (UpdateCategoryRequest) returns (UpdateCategoryResponse);
+}
+
+// The message for the request
+message UpdateCategoryRequest {
+  string request_id = 1;       // A unique identifier for the request
+  common.RequestType type = 2; // The type of the request
+}
+
+// The message for the response
+message UpdateCategoryResponse {
+  string request_id = 1;      // A unique identifier from the request
+  ResponseResult result = 2;  // The result of the request
+  string message = 3;         // The response message
+}
+
+enum ResponseResult {
+  RESPONSE_RESULT_UNSPECIFIED = 0;
+  RESPONSE_RESULT_SUCCESS = 1;
+  RESPONSE_RESULT_ERROR = 2;
+}

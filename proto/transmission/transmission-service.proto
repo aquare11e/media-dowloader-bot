@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+package transmission;
+
+option go_package = "github.com/aquare11e/media-dowloader-bot/proto/transmission";
+
+// Transmission service handles torrent operations
+service TransmissionService {
+  // Add torrent using magnet link
+  rpc AddTorrentByMagnet(AddTorrentByMagnetRequest) returns (AddTorrentResponse) {}
+  
+  // Add torrent using base64 encoded file
+  rpc AddTorrentByFile(AddTorrentByFileRequest) returns (AddTorrentResponse) {}
+  
+  // Get torrent status by ID
+  rpc GetTorrentStatus(GetTorrentStatusRequest) returns (GetTorrentStatusResponse) {}
+}
+
+// Request to add torrent using magnet link
+message AddTorrentByMagnetRequest {
+  string magnet_link = 1;
+  string filedir = 2;  // Directory to save the torrent
+}
+
+// Request to add torrent using base64 encoded file
+message AddTorrentByFileRequest {
+  string base64_file = 1;
+  string filedir = 2;  // Directory to save the torrent
+}
+
+// Response containing torrent ID
+message AddTorrentResponse {
+  int64 torrent_id = 1;
+}
+
+// Request to get torrent status
+message GetTorrentStatusRequest {
+  int64 torrent_id = 1;
+}
+
+// Response containing torrent status
+message GetTorrentStatusResponse {
+  int64 torrent_id = 1;
+  string name = 2;
+  double progress = 3;  // Progress as percentage (0-100)
+  int64 size_bytes = 4;
+  int64 downloaded_bytes = 5;
+  int64 uploaded_bytes = 6;
+  TorrentStatus status = 7;
+  int32 download_rate = 8;  // Bytes per second
+  int32 eta = 9;  // Estimated time to completion in seconds
+}
+
+// Enum representing torrent status
+enum TorrentStatus {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_STOPPED = 1;
+  STATUS_IN_PROGRESS = 2;
+  STATUS_DONE = 3;
+  STATUS_ERROR = 4;
+}
