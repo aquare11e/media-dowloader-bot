@@ -13,6 +13,9 @@ The bot requires the following environment variables to be set:
 - `TELEGRAM_BOT_TOKEN`: The token for the Telegram bot.
 - `ALLOWED_USERS`: A comma-separated list of usernames that are allowed to use the bot.
 - `COORDINATOR_URL`: The URL of the Coordinator service.
+- `REDIS_URL`: The URL of the Redis server.
+- `REDIS_PASSWORD`: The password for the Redis server (optional).
+
 
 ## Building and Running
 
@@ -21,6 +24,8 @@ The bot requires the following environment variables to be set:
    export TELEGRAM_BOT_TOKEN=your-telegram-bot-token
    export ALLOWED_USERS=user1,user2,user3
    export COORDINATOR_URL=your-coordinator-url
+   export REDIS_URL=your-redis-url
+   export REDIS_PASSWORD=your-redis-password  # Optional
    ```
 
 2. Build and run the bot:
@@ -33,6 +38,8 @@ The bot requires the following environment variables to be set:
 
 - `/start`: Initializes the bot and provides a welcome message.
 - `/download`: Starts the download process. The user will be prompted to send a magnet link or a torrent file.
+- `/status`: Provides the current status of ongoing downloads. The user can check the progress and any messages related to their download requests.
+
 
 ## Download Process
 

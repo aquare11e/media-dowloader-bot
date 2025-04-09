@@ -3,6 +3,7 @@ package transmission
 import (
 	"context"
 	"fmt"
+	"log"
 
 	transmissionpb "github.com/aquare11e/media-downloader-bot/common/protogen/transmission"
 	transmissionrpc "github.com/hekmon/transmissionrpc/v3"
@@ -29,11 +30,13 @@ func (s *Server) AddTorrentByMagnet(ctx context.Context, req *transmissionpb.Add
 
 	torrent, err := s.client.TorrentAdd(ctx, *payload)
 	if err != nil {
+		log.Printf("failed to add torrent by magnet: %v", err)
 		return nil, fmt.Errorf("failed to add torrent: %v", err)
 	}
 
 	return &transmissionpb.AddTorrentResponse{
 		TorrentId: *torrent.ID,
+		Name:      *torrent.Name,
 	}, nil
 }
 
@@ -47,21 +50,25 @@ func (s *Server) AddTorrentByFile(ctx context.Context, req *transmissionpb.AddTo
 
 	torrent, err := s.client.TorrentAdd(ctx, *payload)
 	if err != nil {
+		log.Printf("failed to add torrent by file: %v", err)
 		return nil, fmt.Errorf("failed to add torrent: %v", err)
 	}
 
 	return &transmissionpb.AddTorrentResponse{
 		TorrentId: *torrent.ID,
+		Name:      *torrent.Name,
 	}, nil
 }
 
 func (s *Server) GetTorrentStatus(ctx context.Context, req *transmissionpb.GetTorrentStatusRequest) (*transmissionpb.GetTorrentStatusResponse, error) {
 	torrent, err := s.client.TorrentGet(ctx, fields, []int64{req.TorrentId})
 	if err != nil {
+		log.Printf("failed to get torrent status: %v", err)
 		return nil, fmt.Errorf("failed to get torrent status: %v", err)
 	}
 
 	if len(torrent) == 0 {
+		log.Printf("torrent not found: %v", req.TorrentId)
 		return nil, fmt.Errorf("torrent not found")
 	}
 

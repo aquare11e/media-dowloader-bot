@@ -75,7 +75,7 @@ func main() {
 	}
 
 	log.Println("Coordinator service is running on port " + servicePort)
-	go coordinatorService.StartRecoveryService(ctx)
+	go coordinatorService.StartProgressCheckerService(ctx)
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}

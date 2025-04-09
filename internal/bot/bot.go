@@ -2,48 +2,56 @@ package bot
 
 import (
 	"log"
-	"strings"
 
 	coordinator "github.com/aquare11e/media-downloader-bot/common/protogen/coordinator"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/redis/go-redis/v9"
 )
 
 type Bot struct {
-	api          *tgbotapi.BotAPI
-	allowedUsers map[string]bool
-	coordClient  coordinator.CoordinatorServiceClient
-	downloadFlow *DownloadFlow
+	api            *tgbotapi.BotAPI
+	allowedUserIds map[int64]bool
+	coordClient    coordinator.CoordinatorServiceClient
+	redisClient    *redis.Client
+	downloadFlow   *DownloadFlow
+	statusChecker  *StatusChecker
+	queueProcessor *QueueProcessor
 }
 
-type Config struct {
-	Token             string
-	AllowedUsers      []string
-	CoordinatorClient coordinator.CoordinatorServiceClient
-}
-
-func NewBot(cfg Config) (*Bot, error) {
-	bot, err := tgbotapi.NewBotAPI(cfg.Token)
+func NewBot(
+	token string,
+	allowedUserIdsList []int64,
+	coordClient coordinator.CoordinatorServiceClient,
+	redisClient *redis.Client,
+) (*Bot, error) {
+	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, err
 	}
 
-	allowedUsers := make(map[string]bool)
-	for _, user := range cfg.AllowedUsers {
-		allowedUsers[strings.TrimSpace(user)] = true
+	allowedUserIds := make(map[int64]bool)
+	for _, userId := range allowedUserIdsList {
+		allowedUserIds[userId] = true
 	}
 
 	b := &Bot{
-		api:          bot,
-		allowedUsers: allowedUsers,
-		coordClient:  cfg.CoordinatorClient,
+		api:            bot,
+		allowedUserIds: allowedUserIds,
+		coordClient:    coordClient,
+		redisClient:    redisClient,
 	}
 
 	b.downloadFlow = NewDownloadFlow(b)
+	b.statusChecker = NewStatusChecker(b)
+	b.queueProcessor = NewQueueProcessor(b)
 	return b, nil
 }
 
 func (b *Bot) Start() {
-	log.Printf("Authorized on account %s", b.api.Self.UserName)
+	log.Printf("Bot started. Authorized on account %s", b.api.Self.UserName)
+
+	// Start the queue processor
+	b.queueProcessor.Start()
 
 	u := tgbotapi.NewUpdate(0)
 	u.Timeout = 60
@@ -52,9 +60,9 @@ func (b *Bot) Start() {
 
 	for update := range updates {
 		if update.Message != nil {
-			log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+			log.Printf("[%s, %d] %s", update.Message.From.UserName, update.Message.Chat.ID, update.Message.Text)
 
-			if !b.allowedUsers[update.Message.From.UserName] {
+			if !b.allowedUserIds[update.Message.From.ID] {
 				msg := tgbotapi.NewMessage(update.Message.Chat.ID, "Sorry, you are not authorized to use this bot.")
 				b.api.Send(msg)
 				continue
@@ -65,21 +73,43 @@ func (b *Bot) Start() {
 			} else {
 				b.downloadFlow.HandleMessage(update.Message)
 			}
+		} else if update.CallbackQuery != nil {
+			if !b.allowedUserIds[update.CallbackQuery.From.ID] {
+				callback := tgbotapi.NewCallback(update.CallbackQuery.ID, "Sorry, you are not authorized to use this bot.")
+				b.api.Send(callback)
+				continue
+			}
+
+			b.statusChecker.HandleCallback(update.CallbackQuery)
 		}
 	}
+
+	// Stop the queue processor when the bot stops
+	b.queueProcessor.Stop()
 }
 
 func (b *Bot) handleCommand(msg *tgbotapi.Message) {
-	response := tgbotapi.NewMessage(msg.Chat.ID, "")
+	response := b.prehandleMessage(msg)
 
 	switch msg.Command() {
 	case "start":
-		response.Text = "Hello! I am a private bot that can help you download torrents."
+		response.Text = "🌟 Wow! Welcome to the Torrent Downloader Bot! I can help you download torrents effortlessly.\nJust send /help to discover all the amazing commands available!"
+	case "help":
+		response.Text = "🌟 Welcome to the Torrent Downloader Bot! Here are the magical commands you can use:\n/start - Kickstart your journey with the bot\n/download - Let’s dive into the world of torrents and download your favorites!\n/status - Keep track of your ongoing downloads and their progress\n/help - Need assistance? Just ask and I’ll guide you!"
 	case "download":
 		b.downloadFlow.Start(msg.Chat.ID)
+	case "status":
+		b.statusChecker.checkStatus(msg.Chat.ID)
 	default:
 		response.Text = "I don't know that command"
 	}
 
 	b.api.Send(response)
+}
+
+func (b *Bot) prehandleMessage(msg *tgbotapi.Message) tgbotapi.MessageConfig {
+	response := tgbotapi.NewMessage(msg.Chat.ID, "")
+	response.ReplyMarkup = tgbotapi.NewRemoveKeyboard(true)
+
+	return response
 }
