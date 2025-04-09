@@ -10,6 +10,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
       - media-downloader
+      - redis
     depends_on:
       - coordinator
 
