@@ -21,7 +21,7 @@ func NewPlexService(baseURL string, token string, pbTypeToCategoryId map[common.
 }
 
 func (s *PlexService) UpdateCategory(ctx context.Context, in *protoPlex.UpdateCategoryRequest) (*protoPlex.UpdateCategoryResponse, error) {
-	log.Println("UpdateCategory")
+	log.Printf("Received UpdateCategory request: id: %s, type: %v", in.RequestId, in.Type)
 
 	// Call the ScanLibrary method or any other relevant method to update the category
 	err := s.client.ScanLibrary(ctx, in.Type)

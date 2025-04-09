@@ -9,31 +9,34 @@ import "common/common-types.proto";
 // Coordinator service that orchestrates between Plex and Transmission services
 service CoordinatorService {
   // Add torrent using magnet link
-  rpc AddTorrentByMagnet(AddTorrentByMagnetRequest) returns (stream DownloadResponse) {}
+  rpc AddTorrentByMagnet(AddTorrentByMagnetRequest) returns (DownloadResponse) {}
   
   // Add torrent using base64 encoded file
-  rpc AddTorrentByFile(AddTorrentByFileRequest) returns (stream DownloadResponse) {}
+  rpc AddTorrentByFile(AddTorrentByFileRequest) returns (DownloadResponse) {}
 }
 
 // Request to add torrent using magnet link
 message AddTorrentByMagnetRequest {
-  string magnet_link = 1;
-  common.RequestType category = 2;
+  string request_id = 1;
+  string magnet_link = 2;
+  common.RequestType category = 3;
 }
 
 // Request to add torrent using base64 encoded file
 message AddTorrentByFileRequest {
-  string base64_file = 1;
-  common.RequestType category = 2;
+  string request_id = 1;
+  string base64_file = 2;
+  common.RequestType category = 3;
 }
 
 // Response containing download status
 message DownloadResponse {
   string request_id = 1;
-  DownloadStatus status = 2;
-  string message = 3;
-  double progress = 4;
-  int32 eta = 5;
+  string name = 2;
+  DownloadStatus status = 3;
+  string message = 4;
+  double progress = 5;
+  int32 eta = 6;
 }
 
 // Enum representing download status

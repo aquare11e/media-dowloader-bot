@@ -4,8 +4,10 @@ services:
     restart: unless-stopped
     environment:
       - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
-      - ALLOWED_USERS=${ALLOWED_USERS}
+      - ALLOWED_USER_IDS=${ALLOWED_USER_IDS}
       - COORDINATOR_SERVICE_URL=coordinator:8001
+      - REDIS_URL=${REDIS_URL}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
       - media-downloader
     depends_on:
