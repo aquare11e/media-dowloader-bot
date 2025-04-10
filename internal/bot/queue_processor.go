@@ -62,8 +62,6 @@ func (qp *QueueProcessor) processQueue() {
 }
 
 func (qp *QueueProcessor) processMessages(ctx context.Context) {
-	log.Printf("Processing messages from queue: %s", KeyDownloadProgressQueue)
-
 	// Process messages one by one until the queue is empty
 	for {
 		// Get one message from the queue
@@ -72,7 +70,6 @@ func (qp *QueueProcessor) processMessages(ctx context.Context) {
 		if err != nil {
 			if err == redis.Nil {
 				// Queue is empty
-				log.Printf("Queue is empty")
 				return
 			}
 			log.Printf("Failed to get message from queue: %v", err)
