@@ -53,7 +53,6 @@ func (s *Service) checkProgress(ctx context.Context) *time.Duration {
 	}
 
 	if len(requestIDs) == 0 {
-		log.Printf("no torrents in progress")
 		return nil
 	}
 
@@ -124,6 +123,7 @@ func (s *Service) getTorrentStatus(ctx context.Context, requestID string) (*tran
 	// Get torrent status
 	statusReq := &transmission.GetTorrentStatusRequest{
 		TorrentId: torrentIDInt,
+		RequestId: requestID,
 	}
 
 	statusResp, err := s.transmissionClient.GetTorrentStatus(ctx, statusReq)

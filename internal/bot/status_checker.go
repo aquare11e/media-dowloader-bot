@@ -87,11 +87,20 @@ func (sc *StatusChecker) checkStatus(chatID int64) {
 }
 
 func createProgressBar(progress float64) string {
-	filled := int(progress * float64(progressBarLength))
+	if progress < 0 {
+		progress = 0
+	}
+	if progress > 100 {
+		progress = 100
+	}
+
+	relativeProgress := progress / 100
+
+	filled := int(relativeProgress * float64(progressBarLength))
 	empty := progressBarLength - filled
 
 	// Calculate partial character
-	partial := int((progress*float64(progressBarLength) - float64(filled)) * float64(len(progressChars)))
+	partial := int((relativeProgress*float64(progressBarLength) - float64(filled)) * float64(len(progressChars)))
 	partialChar := ""
 	if partial > 0 && filled < progressBarLength {
 		partialChar = string(progressChars[partial-1])
@@ -102,7 +111,7 @@ func createProgressBar(progress float64) string {
 		strings.Repeat("█", filled),
 		partialChar,
 		strings.Repeat("░", empty),
-		progress*100)
+		progress)
 }
 
 func getStatusText(status coordinatorpb.DownloadStatus) string {
@@ -257,7 +266,3 @@ func (sc *StatusChecker) editDetailedStatus(chatID int64, messageID int, request
 	editMsg.ReplyMarkup = &keyboard
 	sc.bot.api.Send(editMsg)
 }
-
-// TODO: Add function to handle callback queries for status updates
-// TODO: Add function to periodically update status messages
-// TODO: Add function to clean up completed downloads from the list

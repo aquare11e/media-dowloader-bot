@@ -20,12 +20,14 @@ service TransmissionService {
 message AddTorrentByMagnetRequest {
   string magnet_link = 1;
   string filedir = 2;  // Directory to save the torrent
+  string request_id = 3;
 }
 
 // Request to add torrent using base64 encoded file
 message AddTorrentByFileRequest {
   string base64_file = 1;
   string filedir = 2;  // Directory to save the torrent
+  string request_id = 3;
 }
 
 // Response containing torrent ID
@@ -37,6 +39,7 @@ message AddTorrentResponse {
 // Request to get torrent status
 message GetTorrentStatusRequest {
   int64 torrent_id = 1;
+  string request_id = 2;
 }
 
 // Response containing torrent status

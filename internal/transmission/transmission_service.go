@@ -30,9 +30,11 @@ func (s *Server) AddTorrentByMagnet(ctx context.Context, req *transmissionpb.Add
 
 	torrent, err := s.client.TorrentAdd(ctx, *payload)
 	if err != nil {
-		log.Printf("failed to add torrent by magnet: %v", err)
+		log.Printf("failed to add torrent by magnet (requestID: %s): %v", req.RequestId, err)
 		return nil, fmt.Errorf("failed to add torrent: %v", err)
 	}
+
+	log.Printf("torrent added (requestID: %s): id: %d, name: %s", req.RequestId, *torrent.ID, *torrent.Name)
 
 	return &transmissionpb.AddTorrentResponse{
 		TorrentId: *torrent.ID,
@@ -50,9 +52,11 @@ func (s *Server) AddTorrentByFile(ctx context.Context, req *transmissionpb.AddTo
 
 	torrent, err := s.client.TorrentAdd(ctx, *payload)
 	if err != nil {
-		log.Printf("failed to add torrent by file: %v", err)
+		log.Printf("failed to add torrent by file (requestID: %s): %v", req.RequestId, err)
 		return nil, fmt.Errorf("failed to add torrent: %v", err)
 	}
+
+	log.Printf("torrent added (requestID: %s): id: %d, name: %s", req.RequestId, *torrent.ID, *torrent.Name)
 
 	return &transmissionpb.AddTorrentResponse{
 		TorrentId: *torrent.ID,
@@ -63,12 +67,12 @@ func (s *Server) AddTorrentByFile(ctx context.Context, req *transmissionpb.AddTo
 func (s *Server) GetTorrentStatus(ctx context.Context, req *transmissionpb.GetTorrentStatusRequest) (*transmissionpb.GetTorrentStatusResponse, error) {
 	torrent, err := s.client.TorrentGet(ctx, fields, []int64{req.TorrentId})
 	if err != nil {
-		log.Printf("failed to get torrent status: %v", err)
+		log.Printf("failed to get torrent status (requestID: %s): %v", req.RequestId, err)
 		return nil, fmt.Errorf("failed to get torrent status: %v", err)
 	}
 
 	if len(torrent) == 0 {
-		log.Printf("torrent not found: %v", req.TorrentId)
+		log.Printf("torrent not found (requestID: %s): %v", req.RequestId, req.TorrentId)
 		return nil, fmt.Errorf("torrent not found")
 	}
 
