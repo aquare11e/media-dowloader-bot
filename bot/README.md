@@ -39,6 +39,8 @@ The bot requires the following environment variables to be set:
 - `/start`: Initializes the bot and provides a welcome message.
 - `/download`: Starts the download process. The user will be prompted to send a magnet link or a torrent file.
 - `/status`: Provides the current status of ongoing downloads. The user can check the progress and any messages related to their download requests.
+- `/help`: Provides a list of available commands and their descriptions.
+
 
 
 ## Download Process

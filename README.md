@@ -100,6 +100,8 @@ Images are available at:
 2. Send `/start` to begin
 3. Available commands:
    - `/download` - Start a download
+   - `/status` - Check the current status of ongoing downloads
+   - `/help` - Get a list of available commands and their descriptions
 
 ## License
 
