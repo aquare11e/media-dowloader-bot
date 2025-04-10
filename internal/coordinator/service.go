@@ -40,6 +40,7 @@ func (s *Service) AddTorrentByMagnet(ctx context.Context, req *coordinatorpb.Add
 			MagnetLink: req.MagnetLink,
 			Filedir:    s.pbTypeToDownloadPath[req.Category],
 			RequestId:  req.RequestId,
+			Category:   req.Category.String(),
 		})
 	})
 }
@@ -52,6 +53,7 @@ func (s *Service) AddTorrentByFile(ctx context.Context, req *coordinatorpb.AddTo
 			Base64File: req.Base64File,
 			Filedir:    s.pbTypeToDownloadPath[req.Category],
 			RequestId:  req.RequestId,
+			Category:   req.Category.String(),
 		})
 	})
 }

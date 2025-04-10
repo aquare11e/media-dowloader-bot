@@ -61,6 +61,13 @@ func (s *Service) checkProgress(ctx context.Context) *time.Duration {
 	for _, requestID := range requestIDs {
 		statusResp, err := s.getTorrentStatus(ctx, requestID)
 		if err != nil {
+			if status.Code(err) == codes.NotFound {
+				log.Printf("torrent not found, stopping for that request (requestID: %s): %v", requestID, err)
+				s.handleTorrentNotFound(ctx, requestID)
+				continue
+			}
+
+			log.Printf("failed to get torrent status (requestID: %s): %v", requestID, err)
 			continue
 		}
 
@@ -68,14 +75,14 @@ func (s *Service) checkProgress(ctx context.Context) *time.Duration {
 		switch statusResp.Status {
 		case transmission.TorrentStatus_STATUS_ERROR:
 			log.Printf("torrent status is error, check transmission's download: %s", statusResp.Name)
-			err := s.handleError(ctx, requestID, statusResp.Name, "Download failed")
+			err := s.handleError(ctx, requestID, statusResp.Name, "❌ Download failed")
 			if err != nil {
 				log.Printf("failed to handle error: %v", err)
 			}
 
 		case transmission.TorrentStatus_STATUS_STOPPED:
 			log.Printf("torrent status is stopped, check transmission's download: %s", statusResp.Name)
-			err := s.handleError(ctx, requestID, statusResp.Name, "Download stopped")
+			err := s.handleError(ctx, requestID, statusResp.Name, "❌ Download stopped")
 			if err != nil {
 				log.Printf("failed to handle error: %v", err)
 			}
@@ -133,6 +140,17 @@ func (s *Service) getTorrentStatus(ctx context.Context, requestID string) (*tran
 	}
 
 	return statusResp, nil
+}
+
+func (s *Service) handleTorrentNotFound(ctx context.Context, requestID string) {
+	s.redisClient.SRem(ctx, KeyTorrentInProgress, requestID)
+	s.redisClient.Del(ctx, fmt.Sprintf(KeyTorrentFormat, requestID))
+
+	s.sendProgressToRedis(ctx, &coordinatorpb.DownloadResponse{
+		RequestId: requestID,
+		Status:    coordinatorpb.DownloadStatus_DOWNLOAD_STATUS_ERROR,
+		Message:   "❌ Download lost",
+	})
 }
 
 func (s *Service) handleError(ctx context.Context, requestID string, name string, message string) error {
@@ -194,7 +212,7 @@ func (s *Service) handleDone(ctx context.Context, requestID string, name string)
 	if err != nil {
 		status, message = coordinatorpb.DownloadStatus_DOWNLOAD_STATUS_ERROR, fmt.Sprintf("Failed to refresh Plex library: %v", err)
 	} else if plexResp.Result == plex.ResponseResult_RESPONSE_RESULT_SUCCESS {
-		status, message = coordinatorpb.DownloadStatus_DOWNLOAD_STATUS_SUCCESS, "Download completed and library refreshed"
+		status, message = coordinatorpb.DownloadStatus_DOWNLOAD_STATUS_SUCCESS, "✅ Download completed and library refreshed"
 	} else {
 		status, message = coordinatorpb.DownloadStatus_DOWNLOAD_STATUS_ERROR, plexResp.Message
 	}

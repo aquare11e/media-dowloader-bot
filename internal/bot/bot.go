@@ -99,7 +99,7 @@ func (b *Bot) handleCommand(msg *tgbotapi.Message) {
 	case "download":
 		b.downloadFlow.Start(msg.Chat.ID)
 	case "status":
-		b.statusChecker.checkStatus(msg.Chat.ID)
+		b.statusChecker.CheckStatus(msg.Chat.ID, msg.MessageID)
 	default:
 		response.Text = "I don't know that command"
 	}

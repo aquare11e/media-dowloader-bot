@@ -21,6 +21,7 @@ message AddTorrentByMagnetRequest {
   string magnet_link = 1;
   string filedir = 2;  // Directory to save the torrent
   string request_id = 3;
+  string category = 4;
 }
 
 // Request to add torrent using base64 encoded file
@@ -28,6 +29,7 @@ message AddTorrentByFileRequest {
   string base64_file = 1;
   string filedir = 2;  // Directory to save the torrent
   string request_id = 3;
+  string category = 4;
 }
 
 // Response containing torrent ID

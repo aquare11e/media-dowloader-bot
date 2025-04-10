@@ -2,6 +2,7 @@ package bot
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"log"
 	"strconv"
@@ -76,7 +77,8 @@ func (qp *QueueProcessor) processMessages(ctx context.Context) {
 			return
 		}
 
-		log.Printf("Message from queue: %s", message)
+		encodedMessage := base64.StdEncoding.EncodeToString([]byte(message))
+		log.Printf("Message from queue: %s", encodedMessage)
 
 		var downloadResp coordinatorpb.DownloadResponse
 		if err := proto.Unmarshal([]byte(message), &downloadResp); err != nil {
@@ -92,6 +94,8 @@ func (qp *QueueProcessor) processMessages(ctx context.Context) {
 			ETA:      time.Duration(downloadResp.Eta) * time.Second,
 			Progress: downloadResp.Progress,
 		}
+
+		log.Printf("Download status: %s", status.ToLogString())
 
 		// Update status in Redis
 		key := fmt.Sprintf(KeyTorrentInProgress, downloadResp.RequestId)
@@ -139,7 +143,7 @@ func (qp *QueueProcessor) processMessages(ctx context.Context) {
 				continue
 			}
 
-			msg := tgbotapi.NewMessage(ownerIDInt, "🎉 Hooray! Your download is complete!\n📁 File: "+status.Name+"\n📝 Message: "+status.Message+"\n\nIf you encountered any issues, feel free to reach out for help!")
+			msg := tgbotapi.NewMessage(ownerIDInt, "🎉 Your download is complete!\n📁 File: "+status.Name+"\n📝 Message: "+status.Message+"\n\nIf you encountered any issues, feel free to reach out for help!")
 			qp.bot.api.Send(msg)
 		}
 	}
