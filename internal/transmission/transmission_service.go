@@ -2,11 +2,12 @@ package transmission
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	transmissionpb "github.com/aquare11e/media-downloader-bot/common/protogen/transmission"
 	transmissionrpc "github.com/hekmon/transmissionrpc/v3"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 type Server struct {
@@ -26,12 +27,13 @@ func (s *Server) AddTorrentByMagnet(ctx context.Context, req *transmissionpb.Add
 		Filename:    &req.MagnetLink,
 		DownloadDir: &req.Filedir,
 		Paused:      &paused,
+		Labels:      []string{req.Category},
 	}
 
 	torrent, err := s.client.TorrentAdd(ctx, *payload)
 	if err != nil {
 		log.Printf("failed to add torrent by magnet (requestID: %s): %v", req.RequestId, err)
-		return nil, fmt.Errorf("failed to add torrent: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to add torrent: %v", err)
 	}
 
 	log.Printf("torrent added (requestID: %s): id: %d, name: %s", req.RequestId, *torrent.ID, *torrent.Name)
@@ -48,12 +50,13 @@ func (s *Server) AddTorrentByFile(ctx context.Context, req *transmissionpb.AddTo
 		MetaInfo:    &req.Base64File,
 		DownloadDir: &req.Filedir,
 		Paused:      &paused,
+		Labels:      []string{req.Category},
 	}
 
 	torrent, err := s.client.TorrentAdd(ctx, *payload)
 	if err != nil {
 		log.Printf("failed to add torrent by file (requestID: %s): %v", req.RequestId, err)
-		return nil, fmt.Errorf("failed to add torrent: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to add torrent: %v", err)
 	}
 
 	log.Printf("torrent added (requestID: %s): id: %d, name: %s", req.RequestId, *torrent.ID, *torrent.Name)
@@ -68,12 +71,12 @@ func (s *Server) GetTorrentStatus(ctx context.Context, req *transmissionpb.GetTo
 	torrent, err := s.client.TorrentGet(ctx, fields, []int64{req.TorrentId})
 	if err != nil {
 		log.Printf("failed to get torrent status (requestID: %s): %v", req.RequestId, err)
-		return nil, fmt.Errorf("failed to get torrent status: %v", err)
+		return nil, status.Errorf(codes.Internal, "failed to get torrent status: %v", err)
 	}
 
 	if len(torrent) == 0 {
 		log.Printf("torrent not found (requestID: %s): %v", req.RequestId, req.TorrentId)
-		return nil, fmt.Errorf("torrent not found")
+		return nil, status.Error(codes.NotFound, "torrent not found")
 	}
 
 	t := torrent[0]

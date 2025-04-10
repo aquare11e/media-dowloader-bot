@@ -55,3 +55,7 @@ func (d *DownloadStatus) FromRedisMap(m map[string]string) error {
 
 	return nil
 }
+
+func (d *DownloadStatus) ToLogString() string {
+	return fmt.Sprintf("Name: %s, Status: %s, Message: %s, ETA: %s, Progress: %f", d.Name, d.Status, d.Message, d.ETA, d.Progress)
+}
